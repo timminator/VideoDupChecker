@@ -10,7 +10,7 @@
 
 ## ℹ About
 
-VideoDupChecker is a command line tool for detecting video duplicates in a folder structure and checks if a smaller video is part of a larger video stream. It also detects if a specified portion (more info further down below) of a video file matches another one in the given folder.
+VideoDupChecker is a command line tool for detecting video duplicates in a folder structure. The program checks if a smaller video is part of a larger video stream. It also detects if a specified portion of a video file (more info further down below) matches another one in the given folder.
 
 The program supports multiple modes for different use cases, including comparing videos across folders or within specific subfolders (such as "Extras").
 
