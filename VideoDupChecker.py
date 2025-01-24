@@ -35,18 +35,21 @@ def process_folders(base_folder, mode, threshold):
     for index, folder_path in enumerate(subfolders, start=1):
         print(f"\n\nProcessing folder: {folder_path} (Folder {index} of {total_folders})\n")
 
-        if mode == "check_extras_folder":
-            # Process "Extras" folder inside each movie folder
-            extras_folder = os.path.join(folder_path, "Extras")
-            if os.path.exists(extras_folder):
-                matches = process_folder(extras_folder, mode, threshold)
+        try:
+            if mode == "check_extras_folder":
+                # Process "Extras" folder inside each movie folder
+                extras_folder = os.path.join(folder_path, "Extras")
+                if os.path.exists(extras_folder):
+                    matches = process_folder(extras_folder, mode, threshold)
+                    if matches:
+                        all_matches[extras_folder].extend(matches)
+            elif mode == "check_movie_folder" or mode == "check_folder":
+                # Process all video files in the given folder (and subfolders for check_movie_folder)
+                matches = process_folder(folder_path, mode, threshold)
                 if matches:
-                    all_matches[extras_folder].extend(matches)
-        elif mode == "check_movie_folder" or mode == "check_folder":
-            # Process all video files in the given folder (and subfolders for check_movie_folder)
-            matches = process_folder(folder_path, mode, threshold)
-            if matches:
-                all_matches[folder_path].extend(matches)
+                    all_matches[folder_path].extend(matches)
+        except FileNotFoundError as e:
+            raise e from None
 
     return all_matches
 
@@ -126,21 +129,25 @@ def main():
 
     start = time.time()
 
-    all_matches = process_folders(args.folder_path, args.mode, args.threshold)
-
-    if not all_matches:
-        print("\n\nNo duplicates or matches found in any folder.\n")
+    try:
+        all_matches = process_folders(args.folder_path, args.mode, args.threshold)
+    except FileNotFoundError as e:
+        # Print the error message from the exception raised in process_folder
+        print(f"Error: {e}")
     else:
-        print("\n\nCombined Matches:")
-        print("-------------------------\n")
-        for folder, matches in all_matches.items():
-            print(f"Matches found in {folder}:")
-            for small, large in matches:
-                print(f"- {small} is part of or matches {large} by more than {args.threshold}%.")
-            print()
-
-    end = time.time()
-    print(f"Time elapsed: {end - start}s.")
+        if not all_matches:
+            print("\n\nNo duplicates or matches found in any folder.\n")
+        else:
+            print("\n\nCombined Matches:")
+            print("-------------------------\n")
+            for folder, matches in all_matches.items():
+                print(f"Matches found in {folder}:")
+                for small, large in matches:
+                    print(f"- {small} is part of or matches {large} by more than {args.threshold}%.")
+                print()
+    finally:
+        end = time.time()
+        print(f"Time elapsed: {end - start:.3f}s.")
 
 if __name__ == "__main__":
     main()

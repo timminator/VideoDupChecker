@@ -1,9 +1,7 @@
 import os
-import sys
 import subprocess
 import shutil
 import winreg
-from math import comb
 
 
 def find_mkvextract():
@@ -17,7 +15,7 @@ def find_mkvextract():
     """
     try:
         # Open the specific registry key for MKVToolnix
-        reg_path = r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\MKVToolNix"
+        reg_path = os.path.join("SOFTWARE", "WOW6432Node", "Microsoft", "Windows", "CurrentVersion", "Uninstall", "MKVToolNix")
         with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as key:
             # Get the value of UninstallString
             uninstall_string = winreg.QueryValueEx(key, "UninstallString")[0]
@@ -280,18 +278,18 @@ def process_folder(folder_path, mode, threshold):
     try:
         extract_video_tracks(folder_path, temp_folder_path, mode)
     except FileNotFoundError as e:
-        # Print a clean error message and exit
-        print(f"Error: {e}")
-        sys.exit(1)
+            raise e from None
+    else:
+        print(f"Trimming headers and footers for files in {temp_folder_path}...")
+        trim_header_and_footer_for_folder(temp_folder_path, header_size, footer_size)
 
-    print(f"Trimming headers and footers for files in {temp_folder_path}...")
-    trim_header_and_footer_for_folder(temp_folder_path, header_size, footer_size)
-
-    print(f"Comparing videos in {temp_folder_path}...")
-    matches = compare_videos(temp_folder_path, threshold)
-
-    # Clear the temp folder after processing
-    clear_temp_folder(temp_folder_path)
-    shutil.rmtree(temp_folder_path)  # Remove the temp folder itself
-
-    return matches
+        print(f"Comparing videos in {temp_folder_path}...")
+        matches = compare_videos(temp_folder_path, threshold)
+        
+        # Clear the temp folder after processing
+        clear_temp_folder(temp_folder_path)
+        
+        return matches
+    finally:
+        # Ensure temp folder is always removed, even if an error occurs
+        shutil.rmtree(temp_folder_path, ignore_errors=True)  # Remove the temp folder itself
