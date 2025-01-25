@@ -31,18 +31,23 @@ def process_folders(base_folder, mode, threshold):
         subfolders = [base_folder]
 
     total_folders = len(subfolders)
-    
+
     for index, folder_path in enumerate(subfolders, start=1):
         print(f"\n\nProcessing folder: {folder_path} (Folder {index} of {total_folders})\n")
 
         try:
             if mode == "check_extras_folder":
-                # Process "Extras" folder inside each movie folder
-                extras_folder = os.path.join(folder_path, "Extras")
-                if os.path.exists(extras_folder):
-                    matches = process_folder(extras_folder, mode, threshold)
+                # Process all subdirectories in the folder
+                subdirectories = [
+                    os.path.join(folder_path, subdir)
+                    for subdir in os.listdir(folder_path)
+                    if os.path.isdir(os.path.join(folder_path, subdir))
+                ]
+                for sub_index, subdirectory in enumerate(subdirectories, start=1):
+                    print(f"\n\nProcessing subdirectory: {subdirectory} (Subdirectory {sub_index} of {len(subdirectories)})\n")
+                    matches = process_folder(subdirectory, mode, threshold)
                     if matches:
-                        all_matches[extras_folder].extend(matches)
+                        all_matches[subdirectory].extend(matches)
             elif mode == "check_movie_folder" or mode == "check_folder":
                 # Process all video files in the given folder (and subfolders for check_movie_folder)
                 matches = process_folder(folder_path, mode, threshold)
@@ -87,17 +92,21 @@ def main():
             "1. check_folder:\n"
             "   Compares all videos contained in this folder and all its subfolders for duplicates.\n\n"
             "2. check_extras_folder:\n"
-            "   Looks specifically for videos in 'Extras' subfolders within the specified folder structure.\n"
-            "   The program will scan each folder within the specified top-level directory and\n"
-            "   process any 'Extras' subfolders it finds.\n"
+            "   Scans for videos in subdirectories within the specified folder structure.\n"
+            "   The program will go through each folder within the specified top-level directory\n"
+            "   and process all subdirectories it finds.\n"
+            "   Each subdirectory (e.g., 'Extras', 'BehinTheScenes', etc.) will be processed individually.\n"
             "   Example folder structure:\n\n"
             "       Movies\n"
             "       ├── Movie 1\n"
-            "       │   └── Extras\n"
+            "       │   ├── BehindtheScenes\n"
+            "       │   └── Subdirectory2\n"
             "       ├── Movie 2\n"
-            "       │   └── Extras\n"
+            "       │   ├── Extras\n"
+            "       │   └── DeletedScenes\n"
             "       └── Movie 3\n"
-            "           └── Extras\n\n"
+            "           ├── BonusContent\n"
+            "           └── Interviews\n\n"
             "3. check_movie_folder:\n"
             "   Compares all videos directly within movie folders, including their subfolders.\n"
             "   The program will iterate through all subdirectories within the specified top-level\n"

@@ -67,28 +67,32 @@ The program supports the following arguments:
     ```
     videodupchecker "C:\path\to\folder" --mode check_folder
     ``` 
-  - `check_extras_folder`: Looks specifically for videos in 'Extras' subfolders within the specified folder    structure. The program will scan each folder within the specified top-level directory and process any      'Extras' subfolders it finds.
+  - `check_extras_folder`: Scans for videos in subdirectories within the specified folder structure. 
+    The program will go through each folder within the specified top-level directory and process all 
+    subdirectories it finds.
+    Each subdirectory (e.g., 'Extras', 'BehinTheScenes', etc.) will be processed individually.
     An example folder structure for this case:
     
-           Movies
-           ├── Movie 1
-           │   └── Extras
-           ├── Movie 2
-           │   └── Extras
-           └── Movie 3
-               └── Extras
-   
+        Movies
+          ├── Movie 1
+          │   ├── BehindtheScenes
+          │   └── Subdirectory2
+          ├── Movie 2
+          │   ├── Extras
+          │   └── DeletedScenes
+          └── Movie 3
+              ├── BonusContent
+              └── Interviews
     Example Usage:
     ```
     videodupchecker "C:\path\to\Movies" --mode check_extras_folder
     ```  
-  
   - `check_movie_folder`:  Compares all videos directly within movie folders, including their subfolders.
     The program will iterate through all subdirectories within the specified top-level
     directory and process videos in each folder and its subfolders.
     An example folder structure for this case:
 
-           Movies
+        Movies
            ├── Movie 1
            │   ├── Video1.mkv
            │   ├── Video2.mkv
