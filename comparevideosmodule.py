@@ -261,12 +261,13 @@ def process_folder(folder_path, mode, threshold):
     Returns:
         list: Matches found in the folder.
     """
-    # Define the temp folder path in the current working directory
-    temp_folder_path = os.path.join(os.getcwd(), "temp")
+    # Define the temp folder path relative to the program's location
+    program_directory = os.path.dirname(os.path.abspath(__file__))
+    temp_folder_path = os.path.join(program_directory, "temp")
 
     # Clear the temp folder at the beginning if it exists
     clear_temp_folder(temp_folder_path)
-    
+
     # Create the temp folder if it doesn't exist
     os.makedirs(temp_folder_path, exist_ok=True)
 
