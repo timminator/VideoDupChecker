@@ -111,7 +111,14 @@ The program supports the following arguments:
   Example Usage:
   ```
   videodupchecker "C:\path\to\folder" --mode check_folder --threshold 90
-  ```  
+  ```
+
+Example of running the command `videodupchecker "C:\Users\YourUsername\Desktop\test" --mode check_extras_folder`:  
+
+<p align="center">
+  <img src="https://github.com/timminator/VideoDupChecker/blob/main/example.png" alt="Example VideoDupChecker">
+
+It iterates through both example movie folders and checks the subfolders Extras and BehindtheScenes for duplicates.
 
 ## Self-Compilation with Nuitka
 
