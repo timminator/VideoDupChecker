@@ -1,5 +1,5 @@
 #define MyAppName "VideoDupChecker"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppURL "https://github.com/timminator/VideoDupChecker"
 #define MyAppExeName "VideoDupChecker.exe"
 #define MyInstallerVersion "1.0.0.0"
